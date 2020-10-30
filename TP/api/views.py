@@ -1,3 +1,7 @@
+from django.contrib.auth.models import User
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.mixins import CreateModelMixin
+from rest_framework import generics, permissions
 from api.serializers import (
     TradeSerializer,
     WatchListSerializer,
@@ -14,10 +18,6 @@ from api.serializers import (
     PriceDetailSerializer
 )
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
-from django.contrib.auth.models import User
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.mixins import CreateModelMixin
-from rest_framework import generics, permissions
 
 
 class UserViewSet(ModelViewSet):

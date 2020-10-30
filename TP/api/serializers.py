@@ -1,6 +1,7 @@
+from django.contrib.auth.models import User
 from rest_framework.serializers import ModelSerializer
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
-from django.contrib.auth.models import User
+
 
 
 class UserSerializer(ModelSerializer):

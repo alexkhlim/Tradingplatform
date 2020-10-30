@@ -1,3 +1,5 @@
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from api.views import (WatchListViewSet,
                        UserViewSet,
                        CurrencyViewSet,
@@ -8,8 +10,6 @@ from api.views import (WatchListViewSet,
                        ItemViewSet,
                        CreateUserView,
                        )
-from rest_framework.routers import DefaultRouter
-from django.urls import path, include
 
 router = DefaultRouter()
 router.register(r"user", UserViewSet)
@@ -24,4 +24,6 @@ router.register(r"inventory", InventoryViewSet)
 urlpatterns = [path('api/', include(router.urls)),
                path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
                path('users/register', CreateUserView.as_view()),
+               path('auth/', include('djoser.urls')),
+               path('auth/', include('djoser.urls.jwt')),
                ]

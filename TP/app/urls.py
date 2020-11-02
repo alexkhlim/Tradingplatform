@@ -1,31 +1,20 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from api.views import (WatchListViewSet,
-                       UserViewSet,
-                       CurrencyViewSet,
-                       InventoryViewSet,
-                       OfferViewSet,
-                       PriceViewSet,
-                       TradeViewSet,
-                       ItemViewSet,
-                       CreateUserView,
-                       CreateWatchListView,
-                       )
+from api.views import *
 
 router = DefaultRouter()
-router.register(r"user", UserViewSet)
-router.register(r"currency", CurrencyViewSet)
-router.register(r"item", ItemViewSet)
-router.register(r"watch-list", WatchListViewSet)
-router.register(r"price", PriceViewSet)
-router.register(r"offer", OfferViewSet)
-router.register(r"trade", TradeViewSet)
-router.register(r"inventory", InventoryViewSet)
+router.register(r"user", UserListCreateView)
+router.register(r"user", UserDetailUpdateView)
+router.register(r"currency", CurrencyListCreateView)
+router.register(r"currency", CurrencyDetailUpdate)
+router.register(r"item", ItemCreateListView)
+router.register(r"item", ItemDetail)
+router.register(r"watch-list", WatchListCreateListView)
+router.register(r"watch-list", WatchListDetailUpdate)
+router.register(r"offer", OfferListCreateView)
 
 urlpatterns = [path('api/', include(router.urls)),
                path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-               path('users/register', CreateUserView.as_view()),
                path('auth/', include('djoser.urls')),
                path('auth/', include('djoser.urls.jwt')),
-               path('user/', CreateWatchListView.as_view()),
                ]

@@ -1,22 +1,9 @@
 from django.contrib.auth.models import User
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.mixins import CreateModelMixin
+from rest_framework.viewsets import ModelViewSet, ViewSetMixin, GenericViewSet
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
+    DestroyModelMixin
 from rest_framework import generics, permissions
-from api.serializers import (
-    TradeSerializer,
-    WatchListSerializer,
-    PriceSerializer,
-    ItemSerializer,
-    OfferSerializer,
-    InventorySerializer,
-    UserSerializer,
-    CurrencySerializer,
-    CreateUserSerializer,
-    CurrencyDetailSerializer,
-    ItemDetailSerializer,
-    WatchListDetailSerializer,
-    PriceDetailSerializer
-)
+from api.serializers import *
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 
 
@@ -25,23 +12,12 @@ class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
 
 
-class CreateUserView(generics.CreateAPIView, CreateModelMixin):
-    queryset = User.objects.all()
-    serializer_class = CreateUserSerializer
-    permission_classes = (permissions.AllowAny,)
-
-
-class UserListView(generics.ListAPIView):
+class UserListCreateView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-class UserDetailView(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class UserUpdateView(generics.UpdateAPIView):
+class UserDetailUpdateView(generics.RetrieveUpdateAPIView, GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -52,19 +28,14 @@ class CurrencyViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class CurrencyListView(generics.ListAPIView):
+class CurrencyListCreateView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
 
 
-class CreateCurrencyView(generics.CreateAPIView, CreateModelMixin):
+class CurrencyDetailUpdate(generics.RetrieveUpdateAPIView, GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
     queryset = Currency.objects.all()
-    serializer_class = CurrencyDetailSerializer
-
-
-class CurrencyDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Currency.objects.all()
-    serializer_class = CurrencyDetailSerializer
+    serializer_class = CurrencySerializer
 
 
 class ItemViewSet(ModelViewSet):
@@ -73,19 +44,15 @@ class ItemViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class CreateItemView(generics.CreateAPIView, CreateModelMixin):
-    queryset = Item.objects.all()
-    serializer_class = ItemDetailSerializer
-
-
-class ItemListView(generics.ListAPIView):
+class ItemCreateListView(generics.CreateAPIView, GenericViewSet, CreateModelMixin, ListModelMixin):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
 
 
-class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
+class ItemDetail(generics.RetrieveAPIView, GenericViewSet, RetrieveModelMixin, UpdateModelMixin,
+                 DestroyModelMixin):
     queryset = Item.objects.all()
-    serializer_class = ItemDetailSerializer
+    serializer_class = ItemSerializer
 
 
 class WatchListViewSet(ModelViewSet):
@@ -94,19 +61,14 @@ class WatchListViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class WatchListListView(generics.ListAPIView):
+class WatchListCreateListView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
 
 
-class CreateWatchListView(generics.CreateAPIView, CreateModelMixin):
+class WatchListDetailUpdate(generics.RetrieveUpdateAPIView, GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
     queryset = WatchList.objects.all()
-    serializer_class = WatchListDetailSerializer
-
-
-class WatchListDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = WatchList.objects.all()
-    serializer_class = WatchListDetailSerializer
+    serializer_class = WatchListSerializer
 
 
 class PriceViewSet(ModelViewSet):
@@ -117,7 +79,7 @@ class PriceViewSet(ModelViewSet):
 
 class PriceDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Price.objects.all()
-    serializer_class = PriceDetailSerializer
+    serializer_class = PriceSerializer
 
 
 class OfferViewSet(ModelViewSet):
@@ -126,12 +88,7 @@ class OfferViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class OfferListView(generics.ListAPIView):
-    queryset = Offer.objects.all()
-    serializer_class = OfferSerializer
-
-
-class OfferCreateView(generics.CreateAPIView):
+class OfferListCreateView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Offer.objects.all()
     serializer_class = OfferSerializer
 

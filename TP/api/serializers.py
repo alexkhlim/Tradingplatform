@@ -3,11 +3,10 @@ from rest_framework.serializers import ModelSerializer
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 
 
-
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name')
+        fields = '__all__'
 
 
 class CreateUserSerializer(ModelSerializer):
@@ -27,46 +26,22 @@ class CreateUserSerializer(ModelSerializer):
 class CurrencySerializer(ModelSerializer):
     class Meta:
         model = Currency
-        fields = ('url', 'code', 'name')
-
-
-class CurrencyDetailSerializer(ModelSerializer):
-    class Meta:
-        model = Currency
-        fields = ('code', 'name')
+        fields = '__all__'
 
 
 class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
-        fields = ('url', 'code', 'name', 'price', 'currency')
-
-
-class ItemDetailSerializer(ModelSerializer):
-    class Meta:
-        model = Currency
         fields = '__all__'
 
 
 class WatchListSerializer(ModelSerializer):
     class Meta:
         model = WatchList
-        fields = ('url', 'user', 'item')
-
-
-class WatchListDetailSerializer(ModelSerializer):
-
-    class Meta:
-        model = WatchList
         fields = '__all__'
 
 
 class PriceSerializer(ModelSerializer):
-    class Meta:
-        model = Price
-        fields = '__all__'
-
-class PriceDetailSerializer(ModelSerializer):
     class Meta:
         model = Price
         fields = '__all__'

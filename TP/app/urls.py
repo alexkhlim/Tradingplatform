@@ -9,6 +9,7 @@ from api.views import (WatchListViewSet,
                        TradeViewSet,
                        ItemViewSet,
                        CreateUserView,
+                       CreateWatchListView,
                        )
 
 router = DefaultRouter()
@@ -26,4 +27,5 @@ urlpatterns = [path('api/', include(router.urls)),
                path('users/register', CreateUserView.as_view()),
                path('auth/', include('djoser.urls')),
                path('auth/', include('djoser.urls.jwt')),
+               path('user/', CreateWatchListView.as_view()),
                ]

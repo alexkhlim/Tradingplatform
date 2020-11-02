@@ -7,7 +7,7 @@ from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'first_name', 'password')
+        fields = ('username', 'email', 'first_name')
 
 
 class CreateUserSerializer(ModelSerializer):

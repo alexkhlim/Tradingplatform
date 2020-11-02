@@ -31,10 +31,30 @@ class CreateUserView(generics.CreateAPIView, CreateModelMixin):
     permission_classes = (permissions.AllowAny,)
 
 
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetailView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserUpdateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
 class CurrencyViewSet(ModelViewSet):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class CurrencyListView(generics.ListAPIView):
+    queryset = Currency.objects.all()
+    serializer_class = CurrencySerializer
 
 
 class CreateCurrencyView(generics.CreateAPIView, CreateModelMixin):
@@ -58,6 +78,11 @@ class CreateItemView(generics.CreateAPIView, CreateModelMixin):
     serializer_class = ItemDetailSerializer
 
 
+class ItemListView(generics.ListAPIView):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+
+
 class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemDetailSerializer
@@ -67,6 +92,11 @@ class WatchListViewSet(ModelViewSet):
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class WatchListListView(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
 
 
 class CreateWatchListView(generics.CreateAPIView, CreateModelMixin):
@@ -94,6 +124,16 @@ class OfferViewSet(ModelViewSet):
     queryset = Offer.objects.all()
     serializer_class = OfferSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class OfferListView(generics.ListAPIView):
+    queryset = Offer.objects.all()
+    serializer_class = OfferSerializer
+
+
+class OfferCreateView(generics.CreateAPIView):
+    queryset = Offer.objects.all()
+    serializer_class = OfferSerializer
 
 
 class TradeViewSet(ModelViewSet):

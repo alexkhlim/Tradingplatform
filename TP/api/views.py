@@ -7,11 +7,6 @@ from api.serializers import *
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 
 
-class UserViewSet(ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
 class UserListCreateView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -22,26 +17,9 @@ class UserDetailUpdateView(generics.RetrieveUpdateAPIView, GenericViewSet, Retri
     serializer_class = UserSerializer
 
 
-class CurrencyViewSet(ModelViewSet):
+class CurrencyListCreateView(generics.ListAPIView, GenericViewSet, ListModelMixin):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
-class CurrencyListCreateView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):
-    queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
-
-
-class CurrencyDetailUpdate(generics.RetrieveUpdateAPIView, GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
-    queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
-
-
-class ItemViewSet(ModelViewSet):
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 class ItemCreateListView(generics.CreateAPIView, GenericViewSet, CreateModelMixin, ListModelMixin):
@@ -71,21 +49,9 @@ class WatchListDetailUpdate(generics.RetrieveUpdateAPIView, GenericViewSet, Retr
     serializer_class = WatchListSerializer
 
 
-class PriceViewSet(ModelViewSet):
-    queryset = Price.objects.all()
-    serializer_class = PriceSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
 class PriceDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Price.objects.all()
     serializer_class = PriceSerializer
-
-
-class OfferViewSet(ModelViewSet):
-    queryset = Offer.objects.all()
-    serializer_class = OfferSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 class OfferListCreateView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):

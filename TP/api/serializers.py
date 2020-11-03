@@ -9,6 +9,12 @@ class UserSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class UserListSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'name')
+
+
 class CreateUserSerializer(ModelSerializer):
     class Meta:
         model = User
@@ -35,6 +41,12 @@ class ItemSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class ItemListSerializer(ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ('code', 'name', 'price')
+
+
 class WatchListSerializer(ModelSerializer):
     class Meta:
         model = WatchList
@@ -51,6 +63,18 @@ class OfferSerializer(ModelSerializer):
     class Meta:
         model = Offer
         fields = '__all__'
+
+
+class OfferListSerializer(ModelSerializer):
+    class Meta:
+        model = Offer
+        fields = ('order_type', 'user', 'item')
+
+
+class OfferCreateSerializer(ModelSerializer):
+    class Meta:
+        model = Offer
+        fields = ('user', 'item', 'entry_quantity', 'quantity', 'price')
 
 
 class TradeSerializer(ModelSerializer):

@@ -1,71 +1,69 @@
 from django.contrib.auth.models import User
-from rest_framework.viewsets import ModelViewSet, ViewSetMixin, GenericViewSet
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
     DestroyModelMixin
-from rest_framework import generics, permissions
+from rest_framework import permissions
 from api.serializers import *
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 
 
-class UserListCreateView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):
+class UserListCreateDetailUpdateView(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin,
+                                     UpdateModelMixin):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.queryset
+        serializer = UserListSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-class UserDetailUpdateView(generics.RetrieveUpdateAPIView, GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
-
-class CurrencyListCreateView(generics.ListAPIView, GenericViewSet, ListModelMixin):
+class CurrencyListCreateView(GenericViewSet, ListModelMixin):
+    """2 fields, don't need an additional serializer"""
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
 
 
-class ItemCreateListView(generics.CreateAPIView, GenericViewSet, CreateModelMixin, ListModelMixin):
+class ItemCreateListDetailView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
 
-
-class ItemDetail(generics.RetrieveAPIView, GenericViewSet, RetrieveModelMixin, UpdateModelMixin,
-                 DestroyModelMixin):
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
-
-
-class WatchListViewSet(ModelViewSet):
-    queryset = WatchList.objects.all()
-    serializer_class = WatchListSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    def list(self, request, *args, **kwargs):
+        queryset = self.queryset
+        serializer = ItemListSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
-class WatchListCreateListView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):
+class WatchListCreateListDetailUpdateView(GenericViewSet, ListModelMixin, CreateModelMixin,
+                                          RetrieveModelMixin, UpdateModelMixin):
+    """2 fields, don't need an additional serializer"""
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
 
 
-class WatchListDetailUpdate(generics.RetrieveUpdateAPIView, GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
-    queryset = WatchList.objects.all()
-    serializer_class = WatchListSerializer
+class OfferListCreateView(GenericViewSet, ListModelMixin, CreateModelMixin):
+    queryset = Offer.objects.all()
+    serializer_class = OfferCreateSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.queryset
+        serializer = OfferListSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
-class PriceDetail(generics.RetrieveUpdateDestroyAPIView):
+class PriceDetail(GenericViewSet):
     queryset = Price.objects.all()
     serializer_class = PriceSerializer
 
 
-class OfferListCreateView(generics.ListCreateAPIView, GenericViewSet, ListModelMixin, CreateModelMixin):
-    queryset = Offer.objects.all()
-    serializer_class = OfferSerializer
-
-
-class TradeViewSet(ModelViewSet):
+class TradeViewSet(GenericViewSet):
     queryset = Trade.objects.all()
     serializer_class = TradeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class InventoryViewSet(ModelViewSet):
+class InventoryViewSet(GenericViewSet):
     queryset = Inventory.objects.all()
     serializer_class = InventorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]

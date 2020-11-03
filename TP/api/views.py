@@ -3,58 +3,100 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
     DestroyModelMixin
-from rest_framework import permissions
+from rest_framework import permissions, status
 from api.serializers import *
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 
 
-class UserListCreateDetailUpdateView(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin,
-                                     UpdateModelMixin):
+class UserView(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    default_serializer_class = UserSerializer
+    serializer_class = {
+        'list': UserListSerializer,
+        'create': UserSerializer,
+        'retrieve': UserSerializer,
+        'update': UserUpdateSerializer,
+    }
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.queryset
-        serializer = UserListSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action, self.default_serializer_class)
 
 
-class CurrencyListCreateView(GenericViewSet, ListModelMixin):
-    """2 fields, don't need an additional serializer"""
+class CurrencyView(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
+    default_serializer_class = CurrencySerializer
+    serializer_class = {
+        'list': CurrencySerializer,
+        'create': CurrencySerializer,
+    }
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action, self.default_serializer_class)
 
 
-class ItemCreateListDetailView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
+class ItemView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     queryset = Item.objects.all()
-    serializer_class = ItemSerializer
+    default_serializer_class = CurrencySerializer
+    serializer_class = {
+        'create': ItemSerializer,
+        'retrieve': ItemRetrieveSerializer,
+    }
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.queryset
-        serializer = ItemListSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, *args, **kwargs):
-        queryset = self.queryset
-        serializer = ItemRetrieveSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action, self.default_serializer_class)
 
 
-class WatchListCreateListDetailUpdateView(GenericViewSet, ListModelMixin, CreateModelMixin,
-                                          RetrieveModelMixin, UpdateModelMixin):
-    """2 fields, don't need an additional serializer"""
+class WatchListView(GenericViewSet, ListModelMixin, CreateModelMixin,
+                    RetrieveModelMixin, UpdateModelMixin):
     queryset = WatchList.objects.all()
-    serializer_class = WatchListSerializer
+    default_serializer_class = WatchListSerializer
+    serializer_class = {
+        'list': WatchListSerializer,
+        'create': WatchListSerializer,
+        'retrieve': WatchListSerializer,
+        'update': WatchListSerializer,
+    }
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action, self.default_serializer_class)
 
 
-class OfferListCreateView(GenericViewSet, ListModelMixin, CreateModelMixin):
+class OfferView(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Offer.objects.all()
-    serializer_class = OfferCreateSerializer
+    default_serializer_class = OfferSerializer
+    serializer_class = {
+        'list': OfferListSerializer,
+        'create': OfferCreateSerializer,
+    }
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.queryset
-        serializer = OfferListSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action, self.default_serializer_class)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+        inv = Inventory.objects.get(user_id=request.data.get('user'), item_id=request.data.get('item'))
+        x = request.data.get('entry_quantity')
+        if inv.quantity < int(x):
+            raise (ValueError('Not enough item'))
+        else:
+            Offer.objects.create(
+                user=User.objects.get(id=request.data.get('user')),
+                item=Item.objects.get(id=request.data.get('item')),
+                entry_quantity=request.data.get('entry_quantity'),
+                quantity=request.data.get('quantity'),
+                price=request.data.get('price'),
+            )
+            inv.quantity -= int(request.data.get('entry_quantity'))
+            inv.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class PriceDetail(GenericViewSet):
@@ -68,7 +110,15 @@ class TradeViewSet(GenericViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class InventoryViewSet(GenericViewSet):
+class InventoryViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin):
     queryset = Inventory.objects.all()
-    serializer_class = InventorySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    default_serializer_class = InventorySerializer
+    serializer_class = {
+        'list': InventorySerializer,
+        'create': InventorySerializer,
+        'retrieve': InventorySerializer,
+    }
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action, self.default_serializer_class)

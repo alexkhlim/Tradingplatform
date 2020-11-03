@@ -68,9 +68,12 @@ class Offer(models.Model):
     item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL)
     entry_quantity = models.IntegerField('Requested quantity')
     quantity = models.IntegerField('Current quantity')
-    order_type = models.PositiveSmallIntegerField(choices=ORDER_TYPE)
+    order_type = models.PositiveSmallIntegerField(choices=ORDER_TYPE, default=0)
     price = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
     is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.user}, {self.item}, {self.order_type}'
 
 
 class Trade(models.Model):
@@ -116,4 +119,7 @@ class Inventory(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL)
     quantity = models.IntegerField('Stocks quantity', default=0)
+
+    def __str__(self):
+        return f'{self.user}, {self.item}'
 

@@ -47,6 +47,12 @@ class ItemListSerializer(ModelSerializer):
         fields = ('code', 'name', 'price')
 
 
+class ItemRetrieveSerializer(ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ('name', 'price', 'currency', 'details')
+
+
 class WatchListSerializer(ModelSerializer):
     class Meta:
         model = WatchList

@@ -34,6 +34,11 @@ class ItemCreateListDetailView(GenericViewSet, ListModelMixin, RetrieveModelMixi
         serializer = ItemListSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    def retrieve(self, request, *args, **kwargs):
+        queryset = self.queryset
+        serializer = ItemRetrieveSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class WatchListCreateListDetailUpdateView(GenericViewSet, ListModelMixin, CreateModelMixin,
                                           RetrieveModelMixin, UpdateModelMixin):

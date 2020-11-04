@@ -1,0 +1,22 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: >
+      bash -c "python3 manage.py migrate
+      && python3 manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      - DJANGO_SETTINGS_MODULE=dev
+  db:
+    image: 'postgres:latest'
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    volumes:
+      - ./.postgres-data:/var/lib/postgresql/data

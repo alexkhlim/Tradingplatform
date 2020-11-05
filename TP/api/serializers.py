@@ -1,5 +1,9 @@
 from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.http import Http404
 from rest_framework.serializers import ModelSerializer
+from rest_framework.response import Response
+from rest_framework import status
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 
 
@@ -13,6 +17,7 @@ class UserListSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'name')
+
 
 class UserUpdateSerializer(ModelSerializer):
     class Meta:
@@ -79,13 +84,35 @@ class OfferSerializer(ModelSerializer):
 class OfferListSerializer(ModelSerializer):
     class Meta:
         model = Offer
-        fields = ('order_type', 'user', 'item')
+        fields = ('order_type', 'user', 'item', 'Offer_type', 'entry_quantity')
 
 
 class OfferCreateSerializer(ModelSerializer):
     class Meta:
         model = Offer
-        fields = ('user', 'item', 'entry_quantity', 'quantity', 'price')
+        fields = ('user', 'item', 'entry_quantity', 'quantity', 'Offer_type', 'price')
+
+    def create(self, validated_data):
+        user_inventory = Inventory.objects.get(user_id=validated_data.get('user').id,
+                                               item_id=validated_data.get('item').id)
+        entry_quantity = validated_data['entry_quantity']
+        if user_inventory.quantity < entry_quantity and validated_data.get('Offer_type') == 'sale':
+            raise (ValueError('Not enough item'))
+        try:
+            Offer.objects.create(
+                user_id=validated_data.get('user').id,
+                item_id=validated_data.get('item').id,
+                entry_quantity=entry_quantity,
+                quantity=validated_data.get('quantity'),
+                price=validated_data.get('price'),
+                Offer_type=validated_data.get('Offer_type')
+            )
+            if validated_data.get('Offer_type') == 'sale':
+                user_inventory.quantity -= entry_quantity
+                user_inventory.save()
+            return validated_data
+        except IntegrityError:
+            raise (Http404('there is no such user or item'))
 
 
 class TradeSerializer(ModelSerializer):
@@ -98,3 +125,24 @@ class InventorySerializer(ModelSerializer):
     class Meta:
         model = Inventory
         fields = '__all__'
+
+    def create(self, validated_data):
+        inv = 0
+        try:
+            inv = Inventory.objects.get(user_id=validated_data.get('user').id, item_id=validated_data.get('item').id)
+        except:
+            pass
+        if bool(inv):
+            inv.quantity += validated_data.get('quantity')
+            inv.save()
+            return inv
+        else:
+            try:
+                Inventory.objects.create(
+                    user_id=validated_data.get('user').id,
+                    item_id=validated_data.get('item').id,
+                    quantity=validated_data.get('quantity'),
+                )
+                return validated_data
+            except IntegrityError:
+                raise (Http404('there is no such user or item'))

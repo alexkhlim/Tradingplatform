@@ -20,7 +20,7 @@ class PriceAdmin(admin.ModelAdmin):
 
 
 class OfferAdmin(admin.ModelAdmin):
-    fields = ('user', 'item', 'entry_quantity', 'quantity', 'order_type', 'price', 'is_active')
+    fields = ('user', 'item', 'entry_quantity', 'quantity', 'order_type', 'price', 'is_active', 'Offer_type')
 
 
 class TradeAdmin(admin.ModelAdmin):

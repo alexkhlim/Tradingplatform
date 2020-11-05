@@ -63,17 +63,22 @@ class Offer(models.Model):
         (1, 'In process'),
         (2, 'Done'),
     ]
+    OFFER_TYPE = [
+        ('buy', 'buy'),
+        ('sale', 'sale'),
+    ]
 
+    Offer_type = models.CharField(max_length=5, choices=OFFER_TYPE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL)
     entry_quantity = models.IntegerField('Requested quantity')
-    quantity = models.IntegerField('Current quantity')
+    quantity = models.IntegerField('Current quantity', default=0)
     order_type = models.PositiveSmallIntegerField(choices=ORDER_TYPE, default=0)
     price = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.user}, {self.item}, {self.order_type}'
+        return f'{self.user}, {self.item}, {self.order_type}, {self.price}, {self.entry_quantity}'
 
 
 class Trade(models.Model):

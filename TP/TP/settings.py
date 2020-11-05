@@ -129,3 +129,8 @@ REST_FRAMEWORK = {
         'rest_framework_json_api.pagination.PageNumberPagination',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

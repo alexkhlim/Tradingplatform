@@ -102,19 +102,3 @@ class InventoryViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, Retriev
     def get_serializer_class(self):
         return self.serializer_class.get(self.action, self.default_serializer_class)
 
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #
-    #     serializer.is_valid(raise_exception=True)
-    #     inv = Inventory.objects.get(user_id=request.data.get('user'), item_id=request.data.get('item'))
-    #     if bool(inv):
-    #         inv.quantity += int(request.data.get('quantity'))
-    #         inv.save()
-    #     else:
-    #         Inventory.objects.create(
-    #             user=User.objects.get(id=request.data.get('user')),
-    #             item=Item.objects.get(id=request.data.get('item')),
-    #             quantity=request.data.get('quantity'),
-    #         )
-    #
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)

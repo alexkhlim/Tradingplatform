@@ -1,9 +1,13 @@
-import os
+import os, sys
 
 from celery import Celery
 
+import TP.settings
+
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TP.settings')
+
+sys.path.append(os.path.abspath('TP'))
 
 app = Celery('TP')
 
@@ -15,6 +19,12 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
+app.conf.beat_schedule = {
+    "create_trade": {
+        "task": "api.tasks.create_trade",
+        "schedule": 30,
+    },
+}
 
 
 @app.task(bind=True)

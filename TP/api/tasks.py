@@ -1,8 +1,9 @@
 from django.db import IntegrityError
 from django.http import Http404
 from app.models import *
+from celery import shared_task
 
-
+@shared_task()
 def create_trade():
     buy_offers = Offer.objects.filter(Offer_type='buy')
     for buy_offer in buy_offers:
@@ -83,8 +84,4 @@ def create_trade():
                         user_inventory.save()
                         sale_offer.save()
                         continue
-
-
-
-
-
+    print('Celery work')

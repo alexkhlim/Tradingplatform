@@ -1,8 +1,11 @@
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, \
-    DestroyModelMixin
+from rest_framework.mixins import (CreateModelMixin,
+                                   ListModelMixin,
+                                   RetrieveModelMixin,
+                                   UpdateModelMixin,
+                                   DestroyModelMixin)
 from rest_framework import permissions, status
 from api.serializers import *
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
@@ -30,10 +33,14 @@ class CurrencyView(GenericViewSet, ListModelMixin, CreateModelMixin):
         'list': CurrencySerializer,
         'create': CurrencySerializer,
     }
+
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
         return self.serializer_class.get(self.action, self.default_serializer_class)
+
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 class ItemView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
@@ -47,6 +54,9 @@ class ItemView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
 
     def get_serializer_class(self):
         return self.serializer_class.get(self.action, self.default_serializer_class)
+
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 class WatchListView(GenericViewSet, ListModelMixin, CreateModelMixin,
@@ -64,6 +74,9 @@ class WatchListView(GenericViewSet, ListModelMixin, CreateModelMixin,
     def get_serializer_class(self):
         return self.serializer_class.get(self.action, self.default_serializer_class)
 
+    def get_paginated_response(self, data):
+        return Response(data)
+
 
 class OfferView(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Offer.objects.all()
@@ -77,16 +90,25 @@ class OfferView(GenericViewSet, ListModelMixin, CreateModelMixin):
     def get_serializer_class(self):
         return self.serializer_class.get(self.action, self.default_serializer_class)
 
+    def get_paginated_response(self, data):
+        return Response(data)
+
 
 class PriceDetail(GenericViewSet):
     queryset = Price.objects.all()
     serializer_class = PriceSerializer
+
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 class TradeViewSet(GenericViewSet):
     queryset = Trade.objects.all()
     serializer_class = TradeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 class InventoryViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin):
@@ -102,3 +124,5 @@ class InventoryViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, Retriev
     def get_serializer_class(self):
         return self.serializer_class.get(self.action, self.default_serializer_class)
 
+    def get_paginated_response(self, data):
+        return Response(data)

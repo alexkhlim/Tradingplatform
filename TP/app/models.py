@@ -58,17 +58,25 @@ class Price(models.Model):
 
 
 class Offer(models.Model):
+    CREATED = 0
+    IN_PROCESS = 1
+    DONE = 2
+
     ORDER_TYPE = [
-        (0, 'Created'),
-        (1, 'In process'),
-        (2, 'Done'),
-    ]
-    OFFER_TYPE = [
-        ('buy', 'buy'),
-        ('sale', 'sale'),
+        (CREATED, 'Created'),
+        (IN_PROCESS, 'In process'),
+        (DONE, 'Done'),
     ]
 
-    Offer_type = models.CharField(max_length=5, choices=OFFER_TYPE)
+    BUY = 'buy'
+    SALE = 'sale'
+
+    OFFER_TYPE = (
+        (BUY, BUY),
+        (SALE, SALE),
+    )
+
+    offer_type = models.CharField(max_length=5, choices=OFFER_TYPE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL)
     entry_quantity = models.IntegerField('Requested quantity')
@@ -126,5 +134,4 @@ class Inventory(models.Model):
     quantity = models.IntegerField('Stocks quantity', default=0)
 
     def __str__(self):
-        return f'{self.user}, {self.item}'
-
+        return f'{self.user}, {self.item}, {self.quantity}'

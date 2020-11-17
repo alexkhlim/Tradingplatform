@@ -1,6 +1,8 @@
-from app.models import *
 from celery import shared_task
+from app.models import *
 from api.service import TradeService
+
+
 @shared_task()
 def create_trade():
     buy_offers = Offer.objects.filter(offer_type=Offer.BUY)
@@ -8,7 +10,10 @@ def create_trade():
         if buy_offer.order_type != Offer.DONE:
             buy_offer.order_type = Offer.IN_PROCESS
             buy_offer.save()
-            user_inventory = Inventory.objects.get(user_id=buy_offer.user.id, item_id=buy_offer.item.id)
+            try:
+                user_inventory = Inventory.objects.get(user_id=buy_offer.user.id, item_id=buy_offer.item.id)
+            except:
+                continue
             sale_offers = Offer.objects.filter(offer_type=Offer.SALE, item=buy_offer.item).order_by('price')
             for sale_offer in sale_offers:
                 if sale_offer.price <= buy_offer.price and sale_offer.order_type != Offer.DONE:

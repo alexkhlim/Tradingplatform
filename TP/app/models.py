@@ -36,10 +36,13 @@ class WatchList(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL)
 
+    def __str__(self):
+        return f'{self.user}, {self.item}'
+
 
 class Price(models.Model):
     currency = models.ForeignKey(
-        Currency, blank=True, null=True, on_delete=models.SET_NULL
+        Currency, blank=True, null=True, on_delete=models.SET_NULL, related_name='currency'
     )
     item = models.ForeignKey(
         Item,
@@ -56,6 +59,9 @@ class Price(models.Model):
         null=True,
     )
 
+    def __str__(self):
+        return f'{self.item}, {self.price}{self.currency}'
+
 
 class Offer(models.Model):
     CREATED = 0
@@ -68,8 +74,8 @@ class Offer(models.Model):
         (DONE, 'Done'),
     ]
 
-    BUY = 'buy'
-    SALE = 'sale'
+    BUY = 1
+    SALE = 2
 
     OFFER_TYPE = (
         (BUY, BUY),
@@ -77,8 +83,8 @@ class Offer(models.Model):
     )
 
     offer_type = models.CharField(max_length=5, choices=OFFER_TYPE)
-    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
-    item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name='user_offer')
+    item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL, related_name='item_offer')
     entry_quantity = models.IntegerField('Requested quantity')
     quantity = models.IntegerField('Current quantity', default=0)
     order_type = models.PositiveSmallIntegerField(choices=ORDER_TYPE, default=0)
@@ -127,10 +133,13 @@ class Trade(models.Model):
         related_query_name='buyer_trade',
     )
 
+    def __str__(self):
+        return f'{self.seller}, {self.buyer}, {self.quantity}'
+
 
 class Inventory(models.Model):
-    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
-    item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name='user_inventory')
+    item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL, related_name='item_inventory')
     quantity = models.IntegerField('Stocks quantity', default=0)
 
     def __str__(self):

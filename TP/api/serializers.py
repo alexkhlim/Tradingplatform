@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status, serializers
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 from api.tasks import create_trade
+from api.service import Statistics
 
 
 class UserSerializer(ModelSerializer):
@@ -86,7 +87,7 @@ class OfferSerializer(ModelSerializer):
 class OfferListSerializer(ModelSerializer):
     class Meta:
         model = Offer
-        fields = ('order_type', 'user', 'item', 'offer_type', 'entry_quantity')
+        fields = ('order_type', 'user', 'item', 'offer_type', 'entry_quantity', 'price')
 
 
 class OfferCreateSerializer(ModelSerializer):
@@ -138,4 +139,5 @@ class InventorySerializer(ModelSerializer):
             raise serializers.ValidationError('there is no such user or item')
         inventory[0].quantity += validated_data.get('quantity')
         inventory[0].save(update_fields=('quantity',))
+        Statistics.lolo()
         return inventory[0]

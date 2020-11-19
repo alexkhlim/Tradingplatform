@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'djoser',
     'rest_framework_jwt',
     'rest_framework_json_api',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -131,6 +132,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework_json_api.pagination.PageNumberPagination',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 CELERY_BROKER_URL = 'redis://redis:6379'

@@ -9,6 +9,7 @@ router.register(r"item", ItemView)
 router.register(r"watch-list", WatchListView)
 router.register(r"offer", OfferView)
 router.register(r"inventory", InventoryViewSet)
+router.register(r'statisticsitem', SatisticsItemView)
 
 urlpatterns = [
     path('api/', include(router.urls)),

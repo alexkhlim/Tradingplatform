@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'api',
     'app',
     'rest_framework',
+    'rest_framework_swagger',
+    'drf_yasg',
     'rest_framework.authtoken',
     'djoser',
     'rest_framework_jwt',
@@ -132,7 +134,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework_json_api.pagination.PageNumberPagination',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    # 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
 CELERY_BROKER_URL = 'redis://redis:6379'

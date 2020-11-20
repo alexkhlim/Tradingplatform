@@ -16,21 +16,6 @@ from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 from api.service import Statistics
 
 
-class UserView(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin):
-    queryset = User.objects.all()
-    default_serializer_class = UserSerializer
-    serializer_class = {
-        'list': UserListSerializer,
-        'create': UserSerializer,
-        'retrieve': UserSerializer,
-        'update': UserUpdateSerializer,
-    }
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    def get_serializer_class(self):
-        return self.serializer_class.get(self.action, self.default_serializer_class)
-
-
 class CurrencyView(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Currency.objects.all()
     default_serializer_class = CurrencySerializer

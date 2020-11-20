@@ -76,7 +76,6 @@ class Statistics:
             if value == max_count:
                 spis_item.append(key)
         count_spis = len(spis_item)
-        print(spis_item)
         if count_spis == 1:
             return Item.objects.filter(name=spis_item[0].name).values()
         elif count_spis == 2:

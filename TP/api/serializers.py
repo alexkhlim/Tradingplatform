@@ -10,6 +10,12 @@ from api.tasks import create_trade
 from api.service import Statistics
 
 
+class UsersSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
 class CurrencySerializer(ModelSerializer):
     class Meta:
         model = Currency
@@ -25,7 +31,7 @@ class ItemSerializer(ModelSerializer):
 class ItemListSerializer(ModelSerializer):
     class Meta:
         model = Item
-        fields = ('code', 'name', 'price')
+        fields = ('id', 'code', 'name', 'price')
 
 
 class ItemRetrieveSerializer(ModelSerializer):

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.models import Trade, Offer, Inventory, Item, WatchList, Price, Currency
+from app.models import Trade, Offer, Inventory, Item, WatchList, Price, Currency, Office
 
 
 class CurrencyAdmin(admin.ModelAdmin):
@@ -44,6 +44,12 @@ class InventoryAdmin(admin.ModelAdmin):
     autocomplete_fields = ('user', 'item',)
 
 
+class OfficeAdmin(admin.ModelAdmin):
+    fields = ('name', 'user', 'item')
+    search_fields = ('name', 'user', 'item')
+    # autocomplete_fields = ('name', 'user')
+
+
 admin.site.register(Currency, CurrencyAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(WatchList, WatchListAdmin)
@@ -51,3 +57,4 @@ admin.site.register(Price, PriceAdmin)
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(Trade, TradeAdmin)
 admin.site.register(Inventory, InventoryAdmin)
+admin.site.register(Office, OfficeAdmin)

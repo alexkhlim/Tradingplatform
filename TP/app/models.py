@@ -144,3 +144,12 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f'{self.user}, {self.item}, {self.quantity}'
+
+
+class Office(models.Model):
+    name = models.CharField('Name', max_length=128, unique=True)
+    user = models.ManyToManyField(User, verbose_name='office')
+    item = models.ManyToManyField(Item, verbose_name='item')
+
+    def __str__(self):
+        return f'{self.name}'

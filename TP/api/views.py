@@ -15,7 +15,7 @@ from rest_framework import permissions, status
 from api.serializers import *
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price, Office
 from api.service import Statistics
-from .permissions import ProductPermission, HrPermission
+from .permissions import ProductPermission, HrPermission, has_action_hr, has_action_product, has_action
 
 
 class UserView(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin):
@@ -67,36 +67,24 @@ class ItemView(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMi
     def get_paginated_response(self, data):
         return Response(data)
 
-    def get_permission(self, func_name):
-        if func_name == 'create':
-            ItemView.permission_classes = (ProductPermission,)
-        elif func_name == 'update':
-            ItemView.permission_classes = (HrPermission,)
-        else:
-            ItemView.permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
     def create(self, request):
-        self.get_permission(self.create.__name__)
+        if not has_action(request.user, model_name='item', permission_type='can_create'):
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
         return super().create(request)
 
     def list(self, request, *args, **kwargs):
-        self.get_permission(self.list.__name__)
         return super().list(request)
 
     def retrieve(self, request, *args, **kwargs):
-        self.get_permission(self.retrieve.__name__)
         return super().retrieve(request)
 
     def update(self, request, *args, **kwargs):
-        self.get_permission(self.update.__name__)
+        if not Office.objects.filter(user=self.request.user).exists():
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
+        if not has_action(request.user, Office.objects.get(user=self.request.user), self.get_object(), 'item',
+                          'can_update'):
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
         return super().update(request)
-
-    def get_queryset(self):
-        if self.request.user.groups.filter(name='hr').exists():
-            queryset = Office.objects.get(user=self.request.user).item.all()
-        else:
-            queryset = Item.objects.all()
-        return queryset
 
 
 class WatchListView(GenericViewSet, ListModelMixin, CreateModelMixin,
@@ -110,7 +98,7 @@ class WatchListView(GenericViewSet, ListModelMixin, CreateModelMixin,
         'update': WatchListSerializer,
     }
 
-    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
         return self.serializer_class.get(self.action, self.default_serializer_class)

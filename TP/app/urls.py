@@ -10,6 +10,7 @@ router.register(r"watch-list", WatchListView)
 router.register(r"offer", OfferView)
 router.register(r"inventory", InventoryViewSet)
 router.register(r'statisticsitem', SatisticsItemView)
+router.register(r'userinventory', UserInventoryView)
 
 urlpatterns = [
     path('api/', include(router.urls)),

@@ -1,9 +1,4 @@
-from django.contrib.auth.models import User, Group
-from django.db.models import Max
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import (CreateModelMixin,
@@ -11,11 +6,11 @@ from rest_framework.mixins import (CreateModelMixin,
                                    RetrieveModelMixin,
                                    UpdateModelMixin,
                                    DestroyModelMixin)
-from rest_framework import permissions, status
+from rest_framework import permissions
 from api.serializers import *
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price, Office
 from api.service import Statistics
-from .permissions import ProductPermission, HrPermission, has_action_hr, has_action_product, has_action
+from .permissions import has_action
 
 
 class UserView(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin):
@@ -79,6 +74,7 @@ class ItemView(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMi
         return super().retrieve(request)
 
     def update(self, request, *args, **kwargs):
+        Inventory.objects.filter(quantity=0).delete()
         if not Office.objects.filter(user=self.request.user).exists():
             return Response({}, status=status.HTTP_403_FORBIDDEN)
         if not has_action(request.user, Office.objects.get(user=self.request.user), self.get_object(), 'item',
@@ -194,3 +190,31 @@ class SatisticsItemView(GenericViewSet, ListModelMixin):
                 most_expensive_item=Statistics.most_expensive_item(), most_popular=Statistics.most_popular()),
             status=HTTP_200_OK
         )
+
+
+class UserInventoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
+    queryset = Inventory.objects.all()
+    default_serializer_class = UserInventorySerializer
+    serializer_class = {
+        'list': UserInventorySerializer,
+    }
+
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action, self.default_serializer_class)
+
+    def get_paginated_response(self, data):
+        return Response(data)
+
+    def list(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return Response({'an unauthenticated user'}, status=status.HTTP_403_FORBIDDEN)
+        return super().list(request)
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            queryset = Inventory.objects.all()
+            return queryset
+        queryset = Inventory.objects.filter(user=self.request.user)
+        return queryset

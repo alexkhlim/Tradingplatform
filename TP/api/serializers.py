@@ -113,5 +113,17 @@ class InventorySerializer(ModelSerializer):
             raise serializers.ValidationError('there is no such user or item')
         inventory[0].quantity += validated_data.get('quantity')
         inventory[0].save(update_fields=('quantity',))
-        Statistics.lolo()
         return inventory[0]
+
+
+class UserInventorySerializer(ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = ('user', 'item', 'quantity')
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        no_items_user = Item.objects.exclude(item_inventory__user_id=user.id)
+        new_inventories = [(Inventory(user_id=user.id, item=item)) for item in no_items_user]
+        inventories = Inventory.objects.bulk_create(new_inventories)
+        return inventories

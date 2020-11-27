@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.status import HTTP_200_OK
 from rest_framework.viewsets import GenericViewSet
@@ -6,7 +7,8 @@ from rest_framework.mixins import (CreateModelMixin,
                                    RetrieveModelMixin,
                                    UpdateModelMixin,
                                    DestroyModelMixin)
-from rest_framework import permissions
+from rest_framework import permissions, status
+from rest_framework.response import Response
 from api.serializers import *
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price, Office
 from api.service import Statistics
@@ -74,7 +76,6 @@ class ItemView(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMi
         return super().retrieve(request)
 
     def update(self, request, *args, **kwargs):
-        Inventory.objects.filter(quantity=0).delete()
         if not Office.objects.filter(user=self.request.user).exists():
             return Response({}, status=status.HTTP_403_FORBIDDEN)
         if not has_action(request.user, Office.objects.get(user=self.request.user), self.get_object(), 'item',
@@ -214,7 +215,5 @@ class UserInventoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
-            queryset = Inventory.objects.all()
-            return queryset
-        queryset = Inventory.objects.filter(user=self.request.user)
-        return queryset
+            return Inventory.objects.all()
+        return Inventory.objects.filter(user=self.request.user)

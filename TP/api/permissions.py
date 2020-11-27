@@ -1,4 +1,6 @@
 from rest_framework.permissions import BasePermission
+
+from rest_framework import serializers
 from app.models import *
 
 
@@ -40,10 +42,13 @@ def has_action_product(user, role='product', permission_type='can_create'):
 def has_action(user, office='', item='', model_name='', permission_type=''):
     if not user.is_authenticated:
         return False
+
     if user.is_superuser:
         return True
+
     if item and not office.item.filter(id=item.id).exists():
         return False
+
     if office:
         roles = user.user_roles.filter(
             unit=office,
@@ -61,3 +66,16 @@ def has_action(user, office='', item='', model_name='', permission_type=''):
         )
 
     return roles.exists()
+
+
+class OfferValidation:
+    @staticmethod
+    def checking_number_items(quantity, entry_quantity, offer_type):
+        if quantity < entry_quantity and offer_type == Offer.SALE:
+            raise serializers.ValidationError('Not enough item')
+
+    @staticmethod
+    def decrease_items(offer_type, user_inventory, entry_quantity):
+        if offer_type == Offer.SALE:
+            user_inventory.quantity -= entry_quantity
+            user_inventory.save(update_fields=('quantity',))

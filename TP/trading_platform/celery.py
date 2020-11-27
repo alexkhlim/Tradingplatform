@@ -2,14 +2,14 @@ import os, sys
 
 from celery import Celery
 
-import TP.settings
+import trading_platform.settings
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TP.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'trading_platform.settings')
 
-sys.path.append(os.path.abspath('TP'))
+sys.path.append(os.path.abspath('trading_platform'))
 
-app = Celery('TP')
+app = Celery('trading_platform')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.

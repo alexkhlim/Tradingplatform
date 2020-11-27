@@ -6,10 +6,10 @@ from api.service import TradeService
 @shared_task()
 def create_trade():
     buy_offers = Offer.objects.filter(offer_type=Offer.BUY)
-    for buy_offer in buy_offers:
+    for buy_offer in buy_offers.iterator():
         if buy_offer.order_type != Offer.DONE:
             buy_offer.order_type = Offer.IN_PROCESS
-            buy_offer.save()
+            buy_offer.save(update_fields=('entry_quantity',))
             try:
                 user_inventory = Inventory.objects.get(user_id=buy_offer.user.id, item_id=buy_offer.item.id)
             except:

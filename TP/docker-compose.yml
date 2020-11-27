@@ -12,7 +12,7 @@ services:
       - web-variables.env
   celery:
     build: .
-    command: celery -A TP worker -B
+    command: celery -A trading_platform worker -B
     volumes:
         - .:/app
     env_file:
@@ -27,7 +27,7 @@ services:
       - 6379:6379
     command: redis-server
     volumes:
-      - trading-redis:/data
+      - trading_platform-redis:/data
   db:
     image: 'postgres:latest'
     env_file:

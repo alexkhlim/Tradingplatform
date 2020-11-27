@@ -36,7 +36,7 @@ class TradeService:
             sale_offer.order_type = Offer.DONE
             buy_offer.save(update_fields=('entry_quantity',))
             user_inventory.save(update_fields=('quantity',))
-            sale_offer.save()
+            sale_offer.save(update_fields=('entry_quantity', 'order_type'))
         elif quantity_buy < quantity_sale:
             user_inventory.quantity += buy_offer.entry_quantity
             sale_offer.entry_quantity -= buy_offer.entry_quantity
@@ -53,35 +53,17 @@ class TradeService:
             buy_offer.order_type = Offer.DONE
             buy_offer.save()
             user_inventory.save(update_fields=('quantity',))
-            sale_offer.save()
+            sale_offer.save(update_fields=('entry_quantity', 'order_type'))
 
 
 class Statistics:
 
     @staticmethod
     def most_expensive_item():
-        items = Item.objects.all()
-        max_expensive = items.aggregate(Max('price'))
-        return Item.objects.filter(price=max_expensive['price__max']).values()
+        return Item.objects.filter(price=Item.objects.aggregate(Max('price'))['price__max']).values()
 
     @staticmethod
     def most_popular():
-        dict_items = {}
-        inventorys = Item.objects.annotate(quantity_items=Count('item_inventory'))
-        for inventory in inventorys:
-            dict_items[inventory] = inventory.quantity_items
-        max_count = max(dict_items.values())
-        spis_item = []
-        for key, value in dict_items.items():
-            if value == max_count:
-                spis_item.append(key)
-        count_spis = len(spis_item)
-        if count_spis == 1:
-            return Item.objects.filter(name=spis_item[0].name).values()
-        elif count_spis == 2:
-            return Item.objects.filter(
-                Q(name=spis_item[0].name) | Q(name=spis_item[1].name)).values()
-        else:
-            return Item.objects.filter(
-                Q(name=spis_item[0].name) | Q(name=spis_item[1].name) | Q(name=spis_item[2].name)
-            ).values()
+        return Item.objects.annotate(
+            num_inv=Count('item_inventory', filter=Q(item_inventory__quantity__gt=0))
+        ).order_by('-num_inv')[:3].values()

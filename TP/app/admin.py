@@ -1,14 +1,14 @@
 from django.contrib import admin
-
+from simple_history.admin import SimpleHistoryAdmin
 from app.models import Trade, Offer, Inventory, Item, WatchList, Price, Currency, Office, Roles, PermissionType
 
 
-class CurrencyAdmin(admin.ModelAdmin):
+class CurrencyAdmin(SimpleHistoryAdmin):
     fields = ('name', 'code')
     search_fields = ('name',)
 
 
-class ItemAdmin(admin.ModelAdmin):
+class ItemAdmin(SimpleHistoryAdmin):
     fields = ('price', 'currency', 'details', 'name', 'code')
     search_fields = ('currency',)
     autocomplete_fields = ('currency',)

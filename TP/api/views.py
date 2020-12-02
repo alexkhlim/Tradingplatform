@@ -1,4 +1,3 @@
-from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.status import HTTP_200_OK
 from rest_framework.viewsets import GenericViewSet
@@ -67,20 +66,17 @@ class ItemView(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMi
     def create(self, request):
         if not has_action(request.user, model_name='item', permission_type='can_create'):
             return Response({}, status=status.HTTP_403_FORBIDDEN)
+
         return super().create(request)
-
-    def list(self, request, *args, **kwargs):
-        return super().list(request)
-
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request)
 
     def update(self, request, *args, **kwargs):
         if not Office.objects.filter(user=self.request.user).exists():
             return Response({}, status=status.HTTP_403_FORBIDDEN)
+
         if not has_action(request.user, Office.objects.get(user=self.request.user), self.get_object(), 'item',
                           'can_update'):
             return Response({}, status=status.HTTP_403_FORBIDDEN)
+
         return super().update(request)
 
 
@@ -127,6 +123,7 @@ class OfferView(GenericViewSet, ListModelMixin, CreateModelMixin):
         sort = params.getlist('sort', None)
         if sort:
             queryset = queryset.order_by(*sort)
+
         return queryset
 
 
@@ -211,9 +208,11 @@ class UserInventoryView(GenericViewSet, ListModelMixin, CreateModelMixin):
     def list(self, request, *args, **kwargs):
         if not self.request.user.is_authenticated:
             return Response({'an unauthenticated user'}, status=status.HTTP_403_FORBIDDEN)
+
         return super().list(request)
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return Inventory.objects.all()
+
         return Inventory.objects.filter(user=self.request.user)

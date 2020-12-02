@@ -1,22 +1,5 @@
-from rest_framework.permissions import BasePermission
-
 from rest_framework import serializers
-from app.models import *
-
-
-class ProductPermission(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return request.user.groups.filter(name='product').exists()
-
-
-class HrPermission(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return request.user.groups.filter(name='hr').exists()
-
-
-class HasAction(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        pass
+from app.models import (Roles, PermissionType, Offer)
 
 
 def has_action_hr(user, office, item, role='hr', permission_type='can_update'):
@@ -24,8 +7,10 @@ def has_action_hr(user, office, item, role='hr', permission_type='can_update'):
     if role.users.filter(username=user.username).exists() and office.item.filter(name=item.name).exists() \
             and role.permission_types.filter(name=permission_type).exists():
         return True
+
     elif user.is_superuser:
         return True
+
     return False
 
 
@@ -34,8 +19,10 @@ def has_action_product(user, role='product', permission_type='can_create'):
     if role.users.filter(username=user.username).exists() and role.permission_types.filter(
             name=permission_type).exists():
         return True
+
     elif user.is_superuser:
         return True
+
     return False
 
 

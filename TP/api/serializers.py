@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-# from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, ValidationError
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 from .permissions import OfferValidation

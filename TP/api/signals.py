@@ -1,17 +1,15 @@
-from django.db.models import Max
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
-from app.models import Inventory, Item
+from django.core.mail import send_mail
 
 
 @receiver(post_save, sender=User)
 def my_callback(sender, instance,  created,  **kwargs):
-    if created:
-        try:
-            Inventory.objects.create(
-                user=instance,
-                item=Item.objects.filter(price=Item.objects.aggregate(Max('price'))['price__max'])[0],
-            )
-        except:
-            pass
+    if created and instance.email:
+        send_mail(
+            'We are happy to welcome you',
+            'Hello, we are glad to see you on our website, visit us more often',
+            'texnocd51@gmail.com',
+            [instance.email],
+        )

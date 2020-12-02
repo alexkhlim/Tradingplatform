@@ -1,4 +1,4 @@
-from django.db.models import Max, Q, Count, Avg, Sum
+from django.db.models import Max, Q, Count
 from app.models import *
 from datetime import datetime
 
@@ -13,6 +13,7 @@ class TradeService:
             quantity_trade = quantity_sale
         else:
             quantity_trade = quantity_buy
+
         Trade.objects.create(
             item_id=buy_offer.item.id,
             seller=sale_offer.user,
@@ -32,28 +33,25 @@ class TradeService:
         if quantity_buy > quantity_sale:
             buy_offer.entry_quantity -= sale_offer.entry_quantity
             user_inventory.quantity += sale_offer.entry_quantity
-            sale_offer.entry_quantity = 0
             sale_offer.order_type = Offer.DONE
-            buy_offer.save(update_fields=('entry_quantity',))
-            user_inventory.save(update_fields=('quantity',))
-            sale_offer.save(update_fields=('entry_quantity', 'order_type'))
+            sale_offer.entry_quantity = 0
+
         elif quantity_buy < quantity_sale:
-            user_inventory.quantity += buy_offer.entry_quantity
             sale_offer.entry_quantity -= buy_offer.entry_quantity
+            user_inventory.quantity += buy_offer.entry_quantity
             buy_offer.order_type = Offer.DONE
             buy_offer.entry_quantity = 0
-            buy_offer.save()
-            user_inventory.save(update_fields=('quantity',))
-            sale_offer.save(update_fields=('entry_quantity',))
+
         else:
             user_inventory.quantity += sale_offer.entry_quantity
             buy_offer.entry_quantity = 0
             sale_offer.entry_quantity = 0
             sale_offer.order_type = Offer.DONE
             buy_offer.order_type = Offer.DONE
-            buy_offer.save()
-            user_inventory.save(update_fields=('quantity',))
-            sale_offer.save(update_fields=('entry_quantity', 'order_type'))
+
+        buy_offer.save(update_fields=('entry_quantity', 'order_type'))
+        user_inventory.save(update_fields=('quantity',))
+        sale_offer.save(update_fields=('entry_quantity', 'order_type'))
 
 
 class Statistics:

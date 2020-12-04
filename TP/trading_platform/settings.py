@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,10 +27,15 @@ INSTALLED_APPS = [
     'api',
     'app',
     'rest_framework',
+    'rest_framework_swagger',
+    'drf_yasg',
     'rest_framework.authtoken',
     'djoser',
     'rest_framework_jwt',
     'rest_framework_json_api',
+    'django_filters',
+    'simple_history',
+    'easy_pdf',
 ]
 
 MIDDLEWARE = [
@@ -40,9 +46,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
-ROOT_URLCONF = 'TP.urls'
+ROOT_URLCONF = 'trading_platform.urls'
 
 TEMPLATES = [
     {
@@ -61,19 +68,20 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'TP.wsgi.application'
+WSGI_APPLICATION = 'trading_platform.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'trading_platform',
-        'USER': 'alex',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('NAME'),
+        'USER': os.getenv('USER'),
+        'PASSWORD': os.getenv('PASSWORD'),
+        'HOST': os.getenv('HOST'),
+        'PORT': os.getenv('PORT'),
     }
 }
 
@@ -118,6 +126,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAdminUser',
         'rest_framework.permissions.AllowAny',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.TokenAuthentication',
@@ -125,7 +134,29 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework_json_api.pagination.PageNumberPagination',
+    # 'DEFAULT_PAGINATION_CLASS':
+    #     'rest_framework_json_api.pagination.PageNumberPagination',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    # 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
+
+DJOSER = {
+    'SEND_ACTIVATION_EMAIL': True,
+    'ACTIVATION_URL': 'auth/activate/{uid}/{token}/',
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'auth/reset/confirm/{uid}/{token}/',
+    'TOKEN_MODEL': None
+}
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'texnocd51@gmail.com'
+EMAIL_HOST_PASSWORD = '021298131206'
+EMAIL_PORT = 587
+
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

@@ -1,0 +1,92 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$180000$ip2ABVkERntL$kPuAJoRYAdmcT3mVQBX928rScTn5w6GBVULjyo7JjFY=",
+    "last_login": "2020-11-26T13:18:54.075Z",
+    "is_superuser": true,
+    "username": "alex",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2020-11-16T11:51:06Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$180000$I4FhJNcpRxVd$xGx+dkGoviCSipdVLnBu/0EZwhwf1TWZji9P87pPuFc=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "pasha",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2020-11-18T10:16:21.540Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$180000$Mpio0kBvXmJO$3l6ucrRiDz1dEBeJteAIqqKaLFh2B9eK0T9TTGrmtHU=",
+    "last_login": "2020-11-26T13:16:17.712Z",
+    "is_superuser": false,
+    "username": "daniaHR",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2020-11-23T08:25:57Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$180000$RbvQcOmX7APz$nSH2p0lh7KmnlmQM1CjShscGmks1E2q7pg7ITWKGc8A=",
+    "last_login": "2020-11-26T12:11:05.023Z",
+    "is_superuser": false,
+    "username": "mishaMANAGER",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2020-11-23T08:26:25Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$180000$feklLQUARvpG$9/gjfw1sOYBQtmoxl0BbJQ2Y7dPyNgSmUUvLx8Jf1oE=",
+    "last_login": "2020-11-26T12:53:35.431Z",
+    "is_superuser": false,
+    "username": "vanoUSER",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2020-11-23T08:26:58.217Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]

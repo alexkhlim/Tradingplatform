@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from api.serializers import *
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price, Office
 from api.service import Statistics
+from api.tasks import test
 from .permissions import has_action
 
 
@@ -70,6 +71,7 @@ class ItemView(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMi
         return super().create(request)
 
     def update(self, request, *args, **kwargs):
+        test()
         if not Office.objects.filter(user=self.request.user).exists():
             return Response({}, status=status.HTTP_403_FORBIDDEN)
 

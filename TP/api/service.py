@@ -1,4 +1,7 @@
+import csv
+import io
 from django.db.models import Max, Q, Count
+from django.db import connection
 from app.models import *
 from datetime import datetime
 
@@ -13,18 +16,17 @@ class TradeService:
             quantity_trade = quantity_sale
         else:
             quantity_trade = quantity_buy
-
-        Trade.objects.create(
-            item_id=buy_offer.item.id,
-            seller=sale_offer.user,
-            buyer=buy_offer.user,
-            quantity=quantity_trade,
-            unit_price=sale_offer.price,
-            seller_offer=sale_offer,
-            buyer_offer=buy_offer,
-            description=f'{buy_offer.user} bought {quantity_trade} shares from \
-            {sale_offer.user} for {sale_offer.price * quantity_trade} in {datetime.now()}'
-        )
+        fields = ([buy_offer.item.id,
+                   sale_offer.user,
+                   buy_offer.user,
+                   quantity_trade,
+                   sale_offer.price,
+                   sale_offer,
+                   buy_offer,
+                   f'{buy_offer.user} bought {quantity_trade} shares from \
+                         {sale_offer.user} for {sale_offer.price * quantity_trade} in {datetime.now()}'
+                   ])
+        return fields
 
     @staticmethod
     def operations_with_trade_data(buy_offer, sale_offer, user_inventory):
@@ -65,3 +67,22 @@ class Statistics:
         return Item.objects.annotate(
             num_inv=Count('item_inventory', filter=Q(item_inventory__quantity__gt=0))
         ).order_by('-num_inv')[:3].values()
+
+
+def cursor_copy_from(file, table, sep, columns):
+    file.seek(0)
+    cursor = connection.cursor()
+    cursor.copy_from(
+        file=file,
+        table=table,
+        sep=sep,
+        columns=columns,
+    )
+
+
+def data_recording(iter_obj, user):
+    stream = io.StringIO()
+    writer = csv.writer(stream, delimiter=',')
+    for obj in iter_obj:
+        writer.writerow([user.id, obj.id, 0])
+    return stream

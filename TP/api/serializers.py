@@ -1,14 +1,19 @@
+import csv
+import io
+from django.db import connection
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.serializers import ModelSerializer, ValidationError
 from app.models import Trade, Offer, Currency, Inventory, Item, WatchList, Price
 from .permissions import OfferValidation
+from .service import cursor_copy_from, data_recording
 
 
 class UsersSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('username', 'password', 'email', 'first_name')
+        # fields = '__all__'
 
 
 class CurrencySerializer(ModelSerializer):
@@ -106,9 +111,17 @@ class UserInventorySerializer(ModelSerializer):
         model = Inventory
         fields = ('user', 'item', 'quantity')
 
+    # def create(self, validated_data):
+    #     Inventory.objects.to_csv('./data.csv')
+    #     user = self.context['request'].user
+    #     no_items_user = Item.objects.exclude(item_inventory__user_id=user.id)
+    #     new_inventories = [(Inventory(user_id=user.id, item=item)) for item in no_items_user]
+    #     inventories = Inventory.objects.bulk_create(new_inventories)
+    #     return inventories
+
     def create(self, validated_data):
         user = self.context['request'].user
         no_items_user = Item.objects.exclude(item_inventory__user_id=user.id)
-        new_inventories = [(Inventory(user_id=user.id, item=item)) for item in no_items_user]
-        inventories = Inventory.objects.bulk_create(new_inventories)
-        return inventories
+        stream = data_recording(no_items_user, user)
+        cursor_copy_from(stream, 'app_inventory', ',', ('user_id', 'item_id', 'quantity'))
+        return Inventory.objects.all()

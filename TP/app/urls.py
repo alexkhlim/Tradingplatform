@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from api.views import *
+from app.views import GeneratePDF
 
 router = DefaultRouter()
 router.register(r'user', UserView)
@@ -17,4 +18,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
+    path('table/', GeneratePDF.as_view()),
 ]

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'rest_framework_json_api',
     'django_filters',
     'simple_history',
+    'easy_pdf',
 ]
 
 MIDDLEWARE = [
